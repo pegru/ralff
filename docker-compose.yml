@@ -1,0 +1,20 @@
+version: '1.0'
+
+services:
+  backend:
+    container_name: ralff-be
+    build:
+      context: ./ralff-be
+    network_mode: host
+    volumes:
+      - ./learned-models:/usr/local/tomcat/learned-models
+    environment:
+      - OUTDIR_LEARNED_MODELS=learned-models
+
+  frontend:
+    container_name: ralff-fe
+    build:
+      context: ./ralff-fe
+    network_mode: host
+    environment:
+      - REACT_APP_RALFF_BE_WS=ws://localhost:8080/ralff-be/websocket

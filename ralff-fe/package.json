@@ -1,0 +1,55 @@
+{
+  "name": "ralff-fe",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "20.10.0",
+    "npm": "~10.2.3"
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.1.0",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.25",
+    "@types/react-dom": "^18.2.10",
+    "file-saver": "^2.0.5",
+    "mathjs": "^12.3.0",
+    "monday-ui-react-core": "^2.82.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.47.0",
+    "react-router-dom": "^6.16.0",
+    "react-scripts": "5.0.1",
+    "styled-components": "^6.0.8",
+    "typescript": "^4.9.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2.0.7"
+  }
+}
