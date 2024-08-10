@@ -2,17 +2,6 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Docker Setup
-
-### Requirements
- * docker (CLI), docker-compose, Rancher Desktop
-
-### Run RALFF-FE
-
-1. Run ```docker-compose up```
-
-## Alternative Available Scripts
-
 ### Requirements
 * node v20.10.0
 * npm 10.2.3

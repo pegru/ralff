@@ -11,14 +11,12 @@
 * docker (CLI), docker-compose, Rancher Desktop
 
 1. Create output directory ```mkdir ./learned-models```
-2. Build project ```mvn compiler:compile -f pom.xml && mvn war:exploded -f pom.xml```
-3. Run ```docker-compose up```
 
 ## Manual Setup Intellij IDEA
 
 ### Apache Tomcat
 
-1. Install Apache Tomcat Version 10.1.18
+1. Install Apache Tomcat Version 10.1.20
     1. Download from official website: https://tomcat.apache.org/download-10.cgi  
        or
     2. ```brew install tomcat@10```
