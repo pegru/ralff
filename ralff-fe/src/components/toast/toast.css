@@ -1,0 +1,8 @@
+.toast {
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out; /* Smooth transition */
+}
+
+.toast.hide {
+    transform: translateX(-100%); /* Moves the element completely to the left */
+    opacity: 0; /* Makes the element fade out */
+}

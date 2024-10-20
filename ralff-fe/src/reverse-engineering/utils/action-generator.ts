@@ -40,19 +40,19 @@ export class Action {
   }
 
   static custom(type: string, node: Element, value: string | boolean | undefined) {
-    return new Action(type, node, undefined, value)
+    return new Action(type, node, undefined, value);
   }
 
-  toJSON(): Object {
+  toJSON(): object {
     return {
       "node": extractIdentifier(this.node),
       "property": this.property.toString(),
       "value": this.value
-    }
+    };
   }
 
   toHashableString(): string {
-    return extractIdentifier(this.node) + this.property.toString() + this.value?.toString() ?? ''
+    return extractIdentifier(this.node) + this.property.toString() + this.value?.toString();
   }
 }
 

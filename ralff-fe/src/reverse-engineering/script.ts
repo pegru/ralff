@@ -3,7 +3,7 @@ import {MyWebSocket} from './socket/my-web-socket';
 import {VisualUtils} from "./utils/visual-utils";
 
 export const init = () => {
-  window.addEventListener('beforeunload', ev => {
+  window.addEventListener('beforeunload', () => {
     RunConfig.saveRunConfig();
   });
   RunConfig.loadRunConfig();

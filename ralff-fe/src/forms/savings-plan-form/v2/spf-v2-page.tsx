@@ -1,13 +1,10 @@
-import React from 'react';
-import SpfV2 from './spf-v2';
-import MainPage from "../../../components/main-page/main-page";
+import {Box} from "@mui/material";
+import {SpfV2} from "./spf-v2.tsx";
 
-const SpfV2Page = () => {
+export const SpfV2Page = () => {
   return (
-    <MainPage>
+    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
       <SpfV2/>
-    </MainPage>
+    </Box>
   );
 };
-
-export default SpfV2Page;

@@ -1,23 +1,21 @@
-import React from 'react';
-import {Button, Flex} from 'monday-ui-react-core';
 import {useNavigate} from 'react-router-dom';
+import {Box, Button} from "@mui/material";
+import {URL_HOME} from "../utils/constants.ts";
 
 interface SubmitFooterProps {
   disabled: boolean
 }
 
-const SubmitFooter = ({disabled = true}: SubmitFooterProps) => {
+export const SubmitFooter = ({disabled = true}: SubmitFooterProps) => {
   const navigate = useNavigate();
   return (
-    <Flex direction={Flex.directions.ROW} justify={Flex.justify.SPACE_BETWEEN} style={{width: '100%'}}>
-      <Button kind={Button.kinds.SECONDARY} onClick={() => navigate('/')}>
+    <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+      <Button variant='outlined' onClick={() => navigate(URL_HOME)}>
         Cancel
       </Button>
-      <Button disabled={disabled} type={Button.types.SUBMIT}>
+      <Button variant='contained' disabled={disabled} type='submit'>
         Submit
       </Button>
-    </Flex>
+    </Box>
   );
 };
-
-export default SubmitFooter;

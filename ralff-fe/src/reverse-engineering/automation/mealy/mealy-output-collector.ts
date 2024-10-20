@@ -100,7 +100,7 @@ export class MealyOutputCollector extends ACollector {
     OUTPUT_EVENTS.forEach(eventString => {
       this.target.addEventListener(eventString, evt => this.outputEventCB(evt), {
         capture: true,
-        passive: false
+        passive: false,
       });
     });
     this.elementRegistry.clear();
@@ -116,8 +116,8 @@ export class MealyOutputCollector extends ACollector {
       }
     });
     this.actions = Array.from(arr);
-    this.actions = this.actions.filter(a => a.property !== ActionProperty.MUT_CHANGE)
-    this.actions = this.actions.filter(a => a.property !== ActionProperty.CHANGE)
+    // this.actions = this.actions.filter(a => a.property !== ActionProperty.MUT_CHANGE)
+    // this.actions = this.actions.filter(a => a.property !== ActionProperty.CHANGE)
   }
 
   private removeDuplicates() {

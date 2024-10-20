@@ -17,4 +17,4 @@ services:
       context: ./ralff-fe
     network_mode: host
     environment:
-      - REACT_APP_RALFF_BE_WS=ws://localhost:8080/ralff-be/websocket
+      - VITE_RALFF_BE_WS=ws://localhost:8080/ralff-be/websocket

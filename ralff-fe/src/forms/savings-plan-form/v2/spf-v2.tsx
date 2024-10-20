@@ -1,15 +1,15 @@
-import React from 'react';
-import {Box, Flex, Heading} from 'monday-ui-react-core';
-import {FormProvider, useForm} from 'react-hook-form';
-import {SavingsFormDto} from '../model/savings-form-dto';
-import Title from './components/title';
-import StartEndDate from './components/start-end-date';
-import MonthlySavings from './components/monthly-savings';
-import SavingsSummary from './components/savings-summary';
-import {useNavigate} from 'react-router-dom';
-import FooterWrapper from './components/footer-wrapper';
-import SavingsWrapper from './components/savings-wrapper';
-import Generate from './components/generate';
+import {useNavigate} from "react-router-dom";
+import {FormProvider, useForm} from "react-hook-form";
+import {SavingsFormDto} from "../types/savings-form-dto.ts";
+import {TitleWithDisabled} from "../components/title.tsx";
+import {StartEndDate} from "../components/dates/start-end-date.tsx";
+import {MonthlySavingsWithDisabled} from "../components/monthly-savings.tsx";
+import {GenerateWithDisabled} from "../components/generate.tsx";
+import {SavingsTable} from "../components/table/savings-table.tsx";
+import {SavingsSummary} from "../components/savings-summary.tsx";
+import {FooterWrapper} from "../components/footer-wrapper.tsx";
+import {FormContainer} from "../../../components/form-container.tsx";
+import {useToast} from "../../../components/toast/use-toast.ts";
 
 const defaultValuesUnfilled: SavingsFormDto = {
   title: '',
@@ -26,39 +26,34 @@ const defaultValuesFilled: SavingsFormDto = {
   savings: []
 }
 
-function SpfV2() {
+export function SpfV2() {
   const navigate = useNavigate();
+  const showToast = useToast();
+  const defaultValues = defaultValuesUnfilled;
   const formMethods = useForm<SavingsFormDto>({
-    defaultValues: defaultValuesUnfilled,
+    defaultValues,
     mode: 'onBlur'
   });
 
   const onSubmit = (data: SavingsFormDto) => {
     console.log(data);
-    navigate('/')
+    navigate('/');
+    showToast({message: 'Submit successful.', type: 'success'});
   }
 
   return (
-    <Flex direction={Flex.directions.COLUMN} align={Flex.align.CENTER} style={{width: '80%'}}>
-      <FormProvider {...formMethods}>
-        <form onSubmit={formMethods.handleSubmit(onSubmit)} onReset={event => formMethods.reset()}>
-          <Box border={Box.borders.DEFAULT} padding={Box.paddings.LARGE} rounded={Box.roundeds.MEDIUM}>
-            <Flex direction={Flex.directions.COLUMN} gap={Flex.gaps.MEDIUM} align={Flex.align.START}>
-              <Heading type={Heading.types.h1} value={'Saving Plan'}/>
-              <Title/>
-              <StartEndDate/>
-              <MonthlySavings/>
-              <Generate/>
-              <SavingsWrapper/>
-              <SavingsSummary/>
-              <FooterWrapper/>
-            </Flex>
-          </Box>
-
-        </form>
-      </FormProvider>
-    </Flex>
+    <FormProvider {...formMethods}>
+      <form onSubmit={formMethods.handleSubmit(onSubmit)} onReset={() => formMethods.reset()} noValidate>
+        <FormContainer title='Saving Plan V2'>
+          <TitleWithDisabled/>
+          <StartEndDate mode='disabled'/>
+          <MonthlySavingsWithDisabled/>
+          <GenerateWithDisabled/>
+          <SavingsTable mode='disabled'/>
+          <SavingsSummary/>
+          <FooterWrapper/>
+        </FormContainer>
+      </form>
+    </FormProvider>
   );
 }
-
-export default SpfV2;

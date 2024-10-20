@@ -3,13 +3,13 @@ import {ACommand, ClickCommand, InputCommand, ResetCommand} from './a-command';
 import {FirstRoleFinder, LabelFinder} from './a-finder';
 
 export function generateSavingPlanFormCommands(): ACommand[] {
-  const titleFinder = new LabelFinder('Title*');
+  const titleFinder = new LabelFinder('Title');
   const a = new InputCommand('iT', titleFinder, 'title');
-  const startDateFinder = new LabelFinder('Start date*');
-  const b = new InputCommand('iSD', startDateFinder, '2023-11-09');
-  const endDateFinder = new LabelFinder('End date*');
-  const c = new InputCommand('iED', endDateFinder, '2023-12-09');
-  const monthlySavingsFinder = new LabelFinder('Monthly savings*');
+  const startDateFinder = new LabelFinder('Start date');
+  const b = new InputCommand('iSD', startDateFinder, '11/09/2023');
+  const endDateFinder = new LabelFinder('End date');
+  const c = new InputCommand('iED', endDateFinder, '12/09/2023');
+  const monthlySavingsFinder = new LabelFinder('Monthly savings');
   const d = new InputCommand('iMS', monthlySavingsFinder, '50');
 
   const generateFinder = new FirstRoleFinder('button', 'Generate');
@@ -29,18 +29,18 @@ export function generateSavingPlanFormCommands(): ACommand[] {
 }
 
 export function generateSavingPlanForm2Commands(): ACommand[] {
-  const titleFinder = new LabelFinder('Title*');
+  const titleFinder = new LabelFinder('Title');
   const a = new InputCommand('iT', titleFinder, 'title');
   const a1 = new InputCommand('i2T', titleFinder, '12345678901');
   const ar = new InputCommand('icT', titleFinder, '');
-  const startDateFinder = new LabelFinder('Start date*');
-  const b = new InputCommand('iSD', startDateFinder, '2023-11-09');
+  const startDateFinder = new LabelFinder('Start date');
+  const b = new InputCommand('iSD', startDateFinder, '11/09/2023');
   const br = new InputCommand('icSD', startDateFinder, '');
-  const endDateFinder = new LabelFinder('End date*');
-  const c = new InputCommand('iED', endDateFinder, '2023-12-09');
-  const c1 = new InputCommand('i2ED', endDateFinder, '2023-10-09');
+  const endDateFinder = new LabelFinder('End date');
+  const c = new InputCommand('iED', endDateFinder, '12/09/2023');
+  const c1 = new InputCommand('i2ED', endDateFinder, '10/09/2023');
   const cr = new InputCommand('icED', endDateFinder, '');
-  const monthlySavingsFinder = new LabelFinder('Monthly savings*');
+  const monthlySavingsFinder = new LabelFinder('Monthly savings');
   const d = new InputCommand('iMS', monthlySavingsFinder, '50');
   const d1 = new InputCommand('i2MS', monthlySavingsFinder, '5');
   const d2 = new InputCommand('i3MS', monthlySavingsFinder, '1500');

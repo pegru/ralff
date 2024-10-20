@@ -1,22 +1,18 @@
-import React, {ReactNode} from 'react';
-import {Box} from 'monday-ui-react-core';
-import Header from './header';
+import {Container, CssBaseline, ThemeProvider} from "@mui/material";
+import {PageHeader} from "./page-header.tsx";
+import {Outlet} from "react-router-dom";
+import {theme} from "../../utils/theme.ts";
 
-interface MainPageProps {
-  children?: ReactNode
-}
-
-function MainPage({children}: MainPageProps) {
+export const MainPage = () => {
   return (
-    <Box backgroundColor={Box.backgroundColors.PRIMARY_BACKGROUND_COLOR}>
-      <Header/>
-      <Box padding={Box.paddings.SMALL}>
-        <div>
-          {children}
-        </div>
-      </Box>
-    </Box>
+    <ThemeProvider theme={theme}>
+      <CssBaseline/>
+      <Container sx={{bgcolor: '#ffffff', height: '100vh', overflowY: 'auto'}} maxWidth={false} disableGutters>
+        <PageHeader/>
+        <Container maxWidth={false} sx={{paddingTop: '24px', height: '100vh'}}>
+          <Outlet/>
+        </Container>
+      </Container>
+    </ThemeProvider>
   );
-}
-
-export default MainPage;
+};

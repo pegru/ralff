@@ -1,18 +1,7 @@
-import React from 'react';
-import MainPage from '../../components/main-page/main-page';
-import HtmlLf from './html-lf';
+import {HtmlLf} from "./html-lf.tsx";
 
-const HtmlLfPage = () => {
-
-  const onSubmit = () => {
-    // ignore
-  }
-
+export const HtmlLfPage = () => {
   return (
-    <MainPage>
-      <HtmlLf onSubmit={onSubmit}/>
-    </MainPage>
+    <HtmlLf/>
   );
 };
-
-export default HtmlLfPage;

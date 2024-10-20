@@ -1,7 +1,8 @@
 import {LearnerAlgorithm, QueryType, System} from './socket/model/message';
 import {getCookie, setCookie} from './utils/cookie-handler';
+
 export const ROOT_ID = '#root';
-export const AUTOMATA_LEARNING_SOCKET = process.env.REACT_APP_RALFF_BE_WS ?? 'ws://localhost:8080/ralff_be_war/websocket'
+export const AUTOMATA_LEARNING_SOCKET = import.meta.env.VITE_RALFF_BE_WS ?? 'ws://localhost:8080/ralff_be_war/websocket'
 export const RELOAD_THRESHOLD = 2000;
 export const SESSION_ID_COOKIE: string = "sessionId";
 export const SOCKET_AUTO_CONNECT_COOKIE: string = "shouldConnectSocket";

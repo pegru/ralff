@@ -49,11 +49,11 @@ export class MyWebSocket {
     this.webSocket = new WebSocket(AUTOMATA_LEARNING_SOCKET);
 
     // Connection opened
-    this.webSocket.addEventListener("open", (event) => {
+    this.webSocket.addEventListener("open", () => {
       this.logger.info('WebSocket connected.');
     });
 
-    this.webSocket.addEventListener('close', async (e) => {
+    this.webSocket.addEventListener('close', async () => {
       this.logger.info('WebSocket disconnected.');
       this.logger.log('Socket is closed. Trying to reconnect...');
       this.webSocket = undefined;
@@ -66,7 +66,7 @@ export class MyWebSocket {
       this.createSocket();
     });
 
-    this.webSocket.addEventListener("error", (e) => {
+    this.webSocket.addEventListener("error", () => {
       this.logger.log('Something went wrong...closing webSocket.');
       this.close();
     });
@@ -75,30 +75,31 @@ export class MyWebSocket {
     this.webSocket.addEventListener("message", async (event) => {
       const message: Message = JSON.parse(event.data);
       switch (message.command) {
-        case Command.PRE:
+        case Command.PRE: {
           VisualUtils.updateResetCount(RunConfig.queryType);
           const r = await this._executor?.pre();
           if (r !== undefined) {
             this.sendMessage(r);
           }
           break;
-        case Command.STEP:
+        }
+        case Command.STEP: {
           this.logger.log("Received LEARNING message: ", message);
           VisualUtils.updateQueryCount(RunConfig.queryType);
 
           const response: Message | undefined = await this._executor?.step(message);
-          this._executor === undefined && console.log("Warning: no executor defined");
-          if (response !== undefined) {
-            this.sendMessage(response);
-          }
+          if (this._executor === undefined) console.log("Warning: no executor defined");
+          if (response !== undefined) this.sendMessage(response);
           break;
-        case Command.POST:
+        }
+        case Command.POST: {
           const pR = await this._executor?.post();
           if (pR !== undefined) {
             this.sendMessage(pR);
           }
           break;
-        case Command.OUTPUT:
+        }
+        case Command.OUTPUT: {
           if (this._executor instanceof MooreExecutor) {
             const oR = await this._executor.currentOutput();
             this.sendMessage(oR);
@@ -106,36 +107,42 @@ export class MyWebSocket {
             console.warn("Expected MooreExecutor");
           }
           break;
-        case Command.ALPHABET:
+        }
+        case Command.ALPHABET: {
           this.logger.log("Retrieve current alphabet...")
           const alphabet = this.executor?.getCurrentAlphabet() ?? [];
           this.logger.log(alphabet);
           this.sendMessage(ALPHABET_MESSAGE(alphabet));
           break;
-        case Command.SESSION:
+        }
+        case Command.SESSION: {
           const oldSessionId = RunConfig.sessionId;
           const newSessionId = message.session?.newSessionId;
           RunConfig.sessionId = newSessionId;
           this.sendMessage(SESSION_MESSAGE(oldSessionId, newSessionId));
           break;
-        case Command.FINISHED:
+        }
+        case Command.FINISHED: {
           console.log(message.command + ': ' + message.symbol);
           break;
-        case Command.RESTORE:
+        }
+        case Command.RESTORE: {
           console.log(message.command + ': ' + message.symbol);
           // TODO handle on server side??
           this.sendMessage(await this._executor?.pre() ?? NOOP_MESSAGE());
           break;
+        }
         case Command.MESSAGE:
           if (message.queryType) {
             console.log(message.queryType === QueryType.MQ ? 'Asking MQs.' : 'Asking EQs.')
             RunConfig.queryType = message.queryType;
           }
           break;
-        default:
+        default: {
           console.log('Unknown Command: ' + message.command);
           console.log(message);
           break;
+        }
       }
     });
   }

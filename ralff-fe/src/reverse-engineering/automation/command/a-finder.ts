@@ -45,7 +45,7 @@ export class LabelFinder extends ByAttributeFinder {
 
   getElement(): HTMLElement | undefined {
     const labels = Array.from(document.querySelectorAll('label'));
-    const label = labels.find(l => l.innerText === this.labelText);
+    const label = labels.find(l => l.innerText.startsWith(this.labelText));
     if (!label) return undefined;
 
     const forAttr = label.getAttribute('for');
@@ -72,7 +72,17 @@ export class FirstRoleFinder extends AFinder {
 
   getElement(): HTMLElement | undefined {
     const elements: HTMLElement[] = Array.from(document.querySelectorAll(this.role));
-    const element = elements.find(e => e.innerText === this.content);
+    const element = elements.find(e => {
+      // 1. check for text content
+      if (e.innerText?.startsWith(this.content)) {
+        return true;
+      }
+      // 2. check for aria-label
+      if (e.ariaLabel?.startsWith(this.content)) {
+        return true;
+      }
+      return false;
+    });
     if (element instanceof HTMLElement) {
       return element as HTMLElement;
     }

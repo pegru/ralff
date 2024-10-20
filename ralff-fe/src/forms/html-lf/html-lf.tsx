@@ -1,20 +1,27 @@
-import React, {useState} from 'react';
+import {FormEvent, useState} from 'react';
+import {useNavigate} from "react-router-dom";
+import {URL_HOME} from "../../utils/constants.ts";
+import {useToast} from "../../components/toast/use-toast.ts";
 
-export interface LoginForm2Props {
-  onSubmit: () => void
-}
+export const HtmlLf = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const navigate = useNavigate();
+  const showToast = useToast();
 
-const HtmlLf = ({onSubmit}: LoginForm2Props) => {
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-
-  const reset = (ev: React.FormEvent<HTMLFormElement>) => {
+  const reset = () => {
     setEmail('');
     setPassword('');
   }
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    showToast({message: 'Login sucessfull.', type: 'success'});
+    navigate(URL_HOME);
+  }
+
   return (
-    <form onSubmit={onSubmit} onReset={reset}>
+    <form onSubmit={handleSubmit} onReset={() => reset()}>
       <div style={{display: 'flex', flexDirection: 'column', gap: 50, justifySelf: 'center', width: '20%'}}>
         <div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
           <div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
@@ -41,12 +48,10 @@ const HtmlLf = ({onSubmit}: LoginForm2Props) => {
           </div>
         </div>
         <div style={{display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'space-between'}}>
-          <button type="button">Cancel</button>
+          <button onClick={() => navigate(URL_HOME)} type="button">Cancel</button>
           <button type="submit">Submit</button>
         </div>
       </div>
     </form>
   );
 };
-
-export default HtmlLf;

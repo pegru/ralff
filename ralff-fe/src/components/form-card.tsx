@@ -1,33 +1,29 @@
-import {Heading} from 'monday-ui-react-core/next';
-import {Box, Button, Flex} from 'monday-ui-react-core';
-import {useNavigate} from 'react-router-dom';
+import {Button, Card, CardActions, CardContent, Typography} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 
-interface FormCardProps {
-  title: string,
-  text: string,
-  url: string
+export interface FormCardProps {
+  title: string;
+  text: string;
+  url: string;
 }
 
-function FormCard(props: FormCardProps) {
+export const FormCard = ({title, text, url}: FormCardProps) => {
   const navigate = useNavigate();
-
   return (
-      <Flex direction={Flex.directions.ROW} style={{width: '60%', display: 'block'}}>
-        <Box border={Box.borders.DEFAULT} rounded={Box.roundeds.MEDIUM}
-             backgroundColor={Box.backgroundColors.GREY_BACKGROUND_COLOR} padding={Box.paddings.MEDIUM}>
-          <Heading type={Heading.types.H2}>
-            {props.title}
-          </Heading>
-          <p>
-            {props.text}
-          </p>
-          <Button onClick={() => navigate(props.url)}>
-            Open
-          </Button>
-        </Box>
-      </Flex>
-
+    <Card sx={{maxWidth: '50%', bgcolor: 'rgba(218,218,218,0.93)'}} elevation={10}>
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+          {title}
+        </Typography>
+        <Typography variant="body2" sx={{color: 'text.secondary'}}>
+          {text}
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <Button variant='contained' size="small" color="primary" onClick={() => navigate(url)}>
+          Open
+        </Button>
+      </CardActions>
+    </Card>
   );
-}
-
-export default FormCard;
+};

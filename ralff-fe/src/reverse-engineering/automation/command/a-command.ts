@@ -71,9 +71,16 @@ export class InputCommand extends ACommand {
     // react specific update event
     // https://stackoverflow.com/questions/23892547/what-is-the-best-way-to-trigger-change-or-input-event-in-react-js; last accessed 08.02.2024
     if (nativeInputValueSetter) {
+      // To simulate user input as close as possible, it is required to focus element
+      // Note: forms may validate "onBlur"
+      // Note: onBlur gets only executed if element has focus
+      e.focus();
       nativeInputValueSetter.call(e, this.input);
-      const event = new Event('change', {bubbles: true});
-      e.dispatchEvent(event);
+      const changeEvent = new Event('change', {bubbles: true});
+      e.dispatchEvent(changeEvent);
+      // Note: calling blur must be queued in event loop to ensure
+      // execution sequence of change event (user input) and subsequent blur
+      setTimeout(() => e.blur());
       return true;
     }
     return false;
@@ -85,10 +92,15 @@ export class InputCommand extends ACommand {
     if (!isEnabled) return false;
 
     // special case where this command is only enabled if it would lead to different input
-    const v = this.finder.getElement()?.getAttribute('value');
-    if (v === this.input) return false;
+    const element = this.finder.getElement();
+    let value: string | undefined | null;
+    if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+      value = element.value;
+    } else {
+      value = element?.getAttribute('value');
+    }
 
-    return true;
+    return value !== this.input;
   }
 }
 

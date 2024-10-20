@@ -1,13 +1,10 @@
-import React from 'react';
-import MainPage from '../../components/main-page/main-page';
-import DesignedLf from "./designed-lf";
+import {DesignedLf} from "./designed-lf.tsx";
+import {Box} from "@mui/material";
 
-const DesignedLfPage = () => {
+export const DesignedLfPage = () => {
   return (
-    <MainPage>
+    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
       <DesignedLf/>
-    </MainPage>
+    </Box>
   );
 };
-
-export default DesignedLfPage;

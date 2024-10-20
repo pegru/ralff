@@ -1,0 +1,1 @@
+export type DisabledMode = 'normal' | 'disabled';

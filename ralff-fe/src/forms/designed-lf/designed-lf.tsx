@@ -1,17 +1,16 @@
-import React from 'react';
-import {Box, Flex, Heading} from 'monday-ui-react-core';
 import {FormProvider, useForm} from 'react-hook-form';
 import {LoginFormDto} from './model/login-form-dto';
 import {useNavigate} from 'react-router-dom';
-import {createPortal} from 'react-dom';
-import {render} from '@testing-library/react';
-import {MyToast} from '../../components/my-toast';
-import Username from '../html-lf/components/username';
-import Password from '../html-lf/components/password';
-import FooterWrapper from "../html-lf/components/footer-wrapper";
+import {Username} from "./components/username.tsx";
+import {Password} from "./components/password.tsx";
+import FooterWrapper from "./components/footer-wrapper.tsx";
+import {URL_HOME} from "../../utils/constants.ts";
+import {FormContainer} from "../../components/form-container.tsx";
+import {useToast} from "../../components/toast/use-toast.ts";
 
-function DesignedLf() {
+export const DesignedLf = () => {
   const navigate = useNavigate();
+  const showToast = useToast();
 
   const initialFormValues: LoginFormDto = {
     username: '',
@@ -29,33 +28,22 @@ function DesignedLf() {
     reset
   } = formMethods;
 
-  const createBanner = () => {
-    render(createPortal(<MyToast/>, document.body));
-  }
-
   const onSubmit = (data: LoginFormDto) => {
     console.log(data);
-    createBanner();
+    showToast({message: 'Login successful.', type: 'success'});
+    navigate(URL_HOME);
   }
 
   return (
-    <Flex direction={Flex.directions.COLUMN} align={Flex.align.CENTER}>
-      <FormProvider {...formMethods}>
-        <form onSubmit={handleSubmit(onSubmit)} onReset={event => reset()}>
-          <Box border={Box.borders.DEFAULT} padding={Box.paddings.LARGE} rounded={Box.roundeds.MEDIUM}>
-            <Flex direction={Flex.directions.COLUMN} gap={Flex.gaps.MEDIUM} align={Flex.align.START}>
-              <Heading type={Heading.types.h1} value={'Login Form'}/>
-              <Username/>
-              <Password/>
-              <FooterWrapper/>
-            </Flex>
-          </Box>
-        </form>
-      </FormProvider>
-    </Flex>
+    <FormProvider {...formMethods}>
+      <form onSubmit={handleSubmit(onSubmit)} onReset={() => reset()}>
+        <FormContainer title='Login Form'>
+          <Username/>
+          <Password/>
+          <FooterWrapper/>
+        </FormContainer>
+      </form>
+    </FormProvider>
+
   );
 }
-
-DesignedLf.componentName = 'LoginForm'
-
-export default DesignedLf;

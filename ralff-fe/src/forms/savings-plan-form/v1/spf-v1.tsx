@@ -1,65 +1,63 @@
-import React from 'react';
-import {Box, Flex, Heading} from 'monday-ui-react-core';
 import {FormProvider, useForm} from 'react-hook-form';
-import {SavingsFormDto} from '../model/savings-form-dto';
-import Title from './components/title';
-import StartEndDate from './components/start-end-date';
-import MonthlySavings from './components/monthly-savings';
-import SavingsSummary from './components/savings-summary';
-import {useNavigate} from 'react-router-dom';
-import FooterWrapper from './components/footer-wrapper';
-import SavingsWrapper from './components/savings-wrapper';
-import Generate from './components/generate';
+import {SavingsFormDto} from '../types/savings-form-dto';
+import {useNavigate} from "react-router-dom";
+import {FormContainer} from "../../../components/form-container.tsx";
+import {Title} from "../components/title.tsx";
+import {StartEndDate} from "../components/dates/start-end-date.tsx";
+import {MonthlySavings} from "../components/monthly-savings.tsx";
+import {Generate} from "../components/generate.tsx";
+import {SavingsSummary} from "../components/savings-summary.tsx";
+import {FooterWrapper} from "../components/footer-wrapper.tsx";
+import {useToast} from "../../../components/toast/use-toast.ts";
+import {SavingsTable} from "../components/table/savings-table.tsx";
+
+const defaultValuesUnfilled: SavingsFormDto = {
+  title: '',
+  startDate: null,
+  endDate: null,
+  monthlySavings: 0,
+  savings: []
+}
+const defaultValuesFilled: SavingsFormDto = {
+  title: 'Title',
+  startDate: new Date('10/11/2023'),
+  endDate: new Date('11/12/2023'),
+  monthlySavings: 150,
+  savings: []
+}
 
 function SpfV1() {
   const navigate = useNavigate();
-  const defaultValuesUnfilled: SavingsFormDto = {
-    title: '',
-    startDate: null,
-    endDate: null,
-    monthlySavings: 0,
-    savings: []
-  }
-  const defaultValuesFilled: SavingsFormDto = {
-    title: 'Title',
-    startDate: new Date('2023-10-11'),
-    endDate: new Date('2023-12-11'),
-    monthlySavings: 150,
-    savings: []
-  }
+  const showToast = useToast();
+
   const defaultValues = defaultValuesUnfilled;
-  // const defaultValues = defaultValuesFilled
 
   const formMethods = useForm<SavingsFormDto>({
-    defaultValues: defaultValues,
+    defaultValues,
     mode: 'onBlur'
   });
+  const {handleSubmit, reset} = formMethods;
 
   const onSubmit = (data: SavingsFormDto) => {
     console.log(data);
-    navigate('/')
+    showToast({message: 'Submit successful.', type: 'success'});
+    navigate('/');
   }
 
   return (
-    <Flex direction={Flex.directions.COLUMN} align={Flex.align.CENTER} style={{width: '80%'}}>
-      <FormProvider {...formMethods}>
-        <form onSubmit={formMethods.handleSubmit(onSubmit)} onReset={event => formMethods.reset()}>
-          <Box border={Box.borders.DEFAULT} padding={Box.paddings.LARGE} rounded={Box.roundeds.MEDIUM}>
-            <Flex direction={Flex.directions.COLUMN} gap={Flex.gaps.MEDIUM} align={Flex.align.START}>
-              <Heading type={Heading.types.h1} value={'Saving Plan'}/>
-              <Title/>
-              <StartEndDate/>
-              <MonthlySavings/>
-              <Generate/>
-              <SavingsWrapper/>
-              <SavingsSummary/>
-              <FooterWrapper/>
-            </Flex>
-          </Box>
-
-        </form>
-      </FormProvider>
-    </Flex>
+    <FormProvider {...formMethods}>
+      <form noValidate onSubmit={handleSubmit(onSubmit)} onReset={() => reset()}>
+        <FormContainer title='Saving Plan'>
+          <Title/>
+          <StartEndDate/>
+          <MonthlySavings/>
+          <Generate/>
+          <SavingsTable mode='normal'/>
+          <SavingsSummary/>
+          <FooterWrapper/>
+        </FormContainer>
+      </form>
+    </FormProvider>
   );
 }
 

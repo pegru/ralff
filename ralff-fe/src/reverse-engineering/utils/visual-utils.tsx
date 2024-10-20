@@ -217,13 +217,13 @@ export class VisualUtils {
     button.addEventListener('click', async () => {
       // execute commands
       const commandList = generateSavingPlanForm2Commands()
-      const messages = generateMessagesForAlphabet(["iT", "iSD", "iED", "icT"], commandList);
+      const messages = generateMessagesForAlphabet(["cG", "iSD", "iSD", "RESET"], [...commandList, generateResetCommand()]);
       const executor = new MealyExecutor(commandList, generateResetCommand());
       await executor.pre();
       for (const m of messages) {
         console.log(m.symbol);
         const res = await executor.step(m);
-        console.log(res?.outputs);
+        console.log(res?.symbol, res?.outputs);
       }
       // console.log((await executor.currentOutput()).outputs);
       // console.log((await executor.currentOutput()).outputs);
