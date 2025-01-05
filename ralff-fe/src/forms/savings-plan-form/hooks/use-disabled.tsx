@@ -14,11 +14,17 @@ export default function useDisabled<T = SavingsFormDto>({dependencies, fieldName
     dependencies = [dependencies];
   }
 
-  if (fieldName && getFieldState(fieldName, formState).error === undefined && Object.keys(formState.errors).length > 0) {
-    // checks whether another field holds error but teh current doesn't -> disable fieldName
+  // error condition - if fieldName is undefined (e.g. button) but any other field holds error
+  if (!fieldName && Object.keys(formState.errors).length > 0) {
     return true;
   }
 
+  // error condition - disable as soon as error occurs somewhere BUT do not disable if fieldName holds error
+  if (fieldName && getFieldState(fieldName, formState).error === undefined && Object.keys(formState.errors).length > 0) {
+    return true;
+  }
+
+  // valid walk through condition - valid-state forward-moving pattern
   for (const n of dependencies) {
     const {isDirty, error} = getFieldState(n, formState);
     const isEnabled = isDirty && !error;

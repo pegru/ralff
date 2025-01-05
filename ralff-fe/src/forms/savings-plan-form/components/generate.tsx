@@ -6,7 +6,7 @@ import {SavingsDto} from "../types/savings-dto.ts";
 import useDisabled from "../hooks/use-disabled.tsx";
 
 export const GenerateWithDisabled = () => {
-  const disabled = useDisabled({dependencies: [FORM_TITLE, FORM_START_DATE, FORM_END_DATE, FORM_MONTHLY_SAVINGS, FORM_SAVINGS]});
+  const disabled = useDisabled({dependencies: [FORM_TITLE, FORM_START_DATE, FORM_END_DATE, FORM_MONTHLY_SAVINGS]});
   return <Generate disabled={disabled}/>
 }
 
