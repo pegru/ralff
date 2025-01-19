@@ -123,6 +123,7 @@ export class MyWebSocket {
           break;
         }
         case Command.FINISHED: {
+          VisualUtils.modifyRootPointerEvents('auto');
           console.log(message.command + ': ' + message.symbol);
           break;
         }

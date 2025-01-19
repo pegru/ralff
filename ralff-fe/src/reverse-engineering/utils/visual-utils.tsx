@@ -12,12 +12,29 @@ const EQ_RESET_COUNT_ID = 'eq-reset-count';
 export class VisualUtils {
   private static visualsRoot: HTMLDivElement | undefined;
 
+  public static modifyRootPointerEvents = (mode: 'none' | 'auto'): void => {
+    const rootElement = document.querySelector(ROOT_ID) as HTMLElement;
+    if (rootElement) {
+      console.log('Setting root.style.pointerEvents to ', mode);
+      rootElement.style.pointerEvents = mode;
+    }
+  }
+
   public static createVisuals(): void {
-    const rootElement = document.querySelector(ROOT_ID);
+    const rootElement: HTMLElement | null = document.querySelector(ROOT_ID);
 
     if (rootElement) {
       this.visualsRoot = document.createElement('div');
       this.visualsRoot.id = "visuals-div";
+      this.visualsRoot.style.position = 'sticky'; // Keeps it fixed on top
+      this.visualsRoot.style.top = '0'; // Position it at the top
+      this.visualsRoot.style.left = '0';
+      this.visualsRoot.style.width = '100%'; // Full width
+      this.visualsRoot.style.backgroundColor = 'rgb(170,170,170)'; // Optional background
+      this.visualsRoot.style.border = 'solid'; // Optional background
+      this.visualsRoot.style.borderColor = 'rgb(0,0,0)'; // Optional background
+      this.visualsRoot.style.color = 'white'; // Optional text color
+      this.visualsRoot.style.zIndex = '1000'; // Ensure it stays above other content
       rootElement.before(this.visualsRoot)
     }
 
@@ -98,6 +115,8 @@ export class VisualUtils {
     const socketButton = document.createElement('button');
     socketButton.textContent = 'Start';
     socketButton.addEventListener('click', async () => {
+      // disable all mouse events on SUT to avoid inconsistency
+      VisualUtils.modifyRootPointerEvents('none');
       this.resetCounter();
       MyWebSocket.setExecutor();
       MyWebSocket.start();
@@ -151,6 +170,7 @@ export class VisualUtils {
     const socketButton = document.createElement('button');
     socketButton.textContent = 'Stop';
     socketButton.addEventListener('click', async () => {
+      VisualUtils.modifyRootPointerEvents('auto');
       MyWebSocket.stop();
     });
     return socketButton;
@@ -200,6 +220,7 @@ export class VisualUtils {
     const cookieButton = document.createElement('button');
     cookieButton.textContent = 'Reset';
     cookieButton.addEventListener('click', async () => {
+      VisualUtils.modifyRootPointerEvents('auto');
       RunConfig.reset();
       window.location.reload();
     });
