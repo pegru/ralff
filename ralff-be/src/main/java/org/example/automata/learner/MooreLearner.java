@@ -35,21 +35,48 @@ import java.util.Random;
  */
 public class MooreLearner extends BasicLearner {
   private static final String FILE_NAME_EXTENSION = "moore";
+  private final MooreSocketSUL mooreSocketSUL;
 
-  public MooreLearner(LearnerConfig learnerConfig, BufferedMessageHandler bufferedMessageHandler) {
+  public MooreLearner(LearnerConfig learnerConfig, BufferedMessageHandler bufferedMessageHandler, MooreSocketSUL mooreSocketSUL) {
     super(learnerConfig, FILE_NAME_EXTENSION, bufferedMessageHandler);
+    this.mooreSocketSUL = mooreSocketSUL;
+  }
+
+  /**
+   * Function tailored to produce output files for Moore Machine
+   *
+   * @param filenameSuffix  the suffix for the filename
+   * @param hypothesisModel learned hypotheses
+   * @param alphabet        input alphabet learned
+   * @throws IOException if file can not be generated
+   */
+  protected void produceMooreOutput(String filenameSuffix, MooreMachine<?, String, ?, String> hypothesisModel,
+                                    Alphabet<String> alphabet) throws IOException {
+    String baseFilename = filenameSuffix.isBlank() ? MODEL_FILENAME : String.join(RunConfig.DELIMITER, MODEL_FILENAME,
+                                                                                  filenameSuffix);
+    String sinkFilename = baseFilename + "-sink";
+    String stBaseName = filenameSuffix.isBlank() ? learnerConfig.getName() :
+        learnerConfig.getName() + RunConfig.DELIMITER + filenameSuffix;
+    String stFilename = String.join(RunConfig.DELIMITER, stBaseName, RunConfig.FILE_ST_MOORE_SUFFIX);
+    if (super.produceOutput(sinkFilename, hypothesisModel, alphabet)) {
+      CompactMoore<String, String> filteredMoore = MooreFilter.pruneStatesWithOutput(hypothesisModel, alphabet,
+                                                                                     RunConfig.SINK_OUTPUT);
+      super.produceOutput(baseFilename, filteredMoore, alphabet);
+    }
+    this.mooreSocketSUL.writeToFile(stFilename);
   }
 
   public void runMooreExperiment(
-      MooreSocketSUL mooreSocketSUL,
       Collection<String> alphabet
   ) throws IOException, EncodeException {
     GrowingMapAlphabet<String> growingMapAlphabet = new GrowingMapAlphabet<>(alphabet);
-    LearningMooreSetup learningMealySetup = new LearningMooreSetup(mooreSocketSUL, growingMapAlphabet);
+    LearningMooreSetup learningMealySetup = new LearningMooreSetup(mooreSocketSUL, growingMapAlphabet, this.learnerConfig);
     runMooreExperiment(learningMealySetup, growingMapAlphabet);
   }
 
-  private void runMooreExperiment(LearningMooreSetup learnerSetup, Alphabet<String> alphabet) throws IOException, EncodeException {
+
+  private void runMooreExperiment(LearningMooreSetup learnerSetup, Alphabet<String> alphabet) throws IOException,
+      EncodeException {
     ExtensibleLStarMoore<String, String> learner = learnerSetup.learner;
     EquivalenceOracle<MooreMachine<?, String, ?, String>, String, Word<String>> eqOracle = learnerSetup.eqOracle;
 
@@ -63,13 +90,6 @@ public class MooreLearner extends BasicLearner {
       learner.startLearning();
 
       while (true) {
-        // store hypothesis as file
-        if (saveAllHypotheses) {
-          String outputFilename = RunConfig.INTERMEDIATE_HYPOTHESIS_FILENAME + stage;
-          produceOutput(outputFilename, learner.getHypothesisModel(), alphabet, false);
-          System.out.println("model size " + learner.getHypothesisModel().getStates().size());
-        }
-
         // Print statistics
         System.out.println(stage + ": " + Calendar.getInstance().getTime());
         System.out.println("Hypothesis size: " + learner.getHypothesisModel().size() + " states");
@@ -82,20 +102,20 @@ public class MooreLearner extends BasicLearner {
         if (ce == null) {
           // No counterexample found, stop learning
           System.out.println("\nFinished learning!");
-
-          boolean success = produceOutput(MODEL_FILENAME + "-sink", learner.getHypothesisModel(), alphabet, true);
-          if (success) {
-            CompactMoore<String, String> filteredMoore = MooreFilter.pruneStatesWithOutput(learner.getHypothesisModel(), alphabet, RunConfig.SINK_OUTPUT);
-            produceOutput(MODEL_FILENAME, filteredMoore, alphabet, true);
-          }
+          produceMooreOutput("", learner.getHypothesisModel(), alphabet);
           break;
         } else {
           // Counterexample found, rinse and repeat
           System.out.println("CE: " + ce);
           System.out.println("Member answer:\t" + ce.getOutput());
-          System.out.println("Learner answer:\t" + learner.getHypothesisModel().computeSuffixOutput(ce.getPrefix(), ce.getSuffix()));
+          System.out.println("Learner answer:\t" + learner.getHypothesisModel().computeSuffixOutput(ce.getPrefix(),
+                                                                                                    ce.getSuffix()));
           System.out.println();
-
+          if (learnerConfig.isSaveAllHypotheses()) {
+            // store hypothesis as file
+            produceMooreOutput(String.join(RunConfig.DELIMITER, RunConfig.INTERMEDIATE_HYPOTHESIS_FILENAME,
+                                           Integer.toString(stage)), learner.getHypothesisModel(), alphabet);
+          }
           // notify SUL Observer script that we start asking MQs again
           this.bufferedMessageHandler.send(new Message.Builder(Command.MESSAGE).withQueryType(QueryType.MQ).build());
           stage++;
@@ -104,22 +124,28 @@ public class MooreLearner extends BasicLearner {
       }
     } catch (Exception e) {
       if (saveOnCrash) {
-        produceOutput("hyp.before.crash.dot", learner.getHypothesisModel(), alphabet, true);
+        produceMooreOutput("before-crash", learner.getHypothesisModel(), alphabet);
       }
       throw e;
     }
   }
 
   public static class LearningMooreSetup {
-    public static int randomWordsMinLength = 2; // min word length
-    public static int randomWordsMaxLength = 10; // max word length
-    public static int randomWordsMaxTests = 100; // the number of words that is tested in total
+    public final int randomWordsMinLength; // min word length
+    public final int randomWordsMaxLength; // max word length
+    public final int randomWordsMaxTests; // the number of words that is tested in total
     public final EquivalenceOracle<MooreMachine<?, String, ?, String>, String, Word<String>> eqOracle;
     public final ExtensibleLStarMoore<String, String> learner;
 
-    public LearningMooreSetup(MooreSocketSUL mooreSocketSUL, Alphabet<String> alphabet) {
-      MembershipOracle.MooreMembershipOracle<String, String> membershipOracle = new MooreOracleSUL(mooreSocketSUL, RunConfig.SINK_OUTPUT);
-      eqOracle = new MooreRandomWordsEQOracle<>(membershipOracle, randomWordsMinLength, randomWordsMaxLength, randomWordsMaxTests, new Random(123456L));
+    public LearningMooreSetup(MooreSocketSUL mooreSocketSUL, Alphabet<String> alphabet, LearnerConfig learnerConfig) {
+      this.randomWordsMinLength = learnerConfig.getEqConfig().getRandomWordsMinLength();
+      this.randomWordsMaxLength = learnerConfig.getEqConfig().getRandomWordsMaxLength();
+      this.randomWordsMaxTests = learnerConfig.getEqConfig().getRandomWordsMaxTests();
+
+      MembershipOracle.MooreMembershipOracle<String, String> membershipOracle = new MooreOracleSUL(mooreSocketSUL,
+                                                                                                   RunConfig.SINK_OUTPUT);
+      eqOracle = new MooreRandomWordsEQOracle<>(membershipOracle, randomWordsMinLength, randomWordsMaxLength,
+                                                randomWordsMaxTests, new Random(123456L));
       learner = new ExtensibleLStarMooreBuilder<String, String>()
           .withAlphabet(alphabet)
           .withOracle(membershipOracle)

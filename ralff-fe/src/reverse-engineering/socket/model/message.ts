@@ -1,5 +1,6 @@
 import {Action} from '../../utils/action-generator';
 import {SessionCtx} from './session-ctx';
+import {RunConfig} from "../../run-config.ts";
 
 export enum System {
   DUMMY = "DUMMY",
@@ -35,15 +36,57 @@ export enum Command {
 
 type DotRankDir = 'TB' | 'LR';
 
+export class EQMealyConfig {
+  randomWalkChanceOfResetting: number;
+  randomWalkNumberOfSymbols: number;
+
+  constructor(randomWalkChanceOfResetting: number, randomWalkNumberOfSymbols: number) {
+    this.randomWalkChanceOfResetting = randomWalkChanceOfResetting;
+    this.randomWalkNumberOfSymbols = randomWalkNumberOfSymbols;
+  }
+}
+
+export class EQMooreConfig {
+  randomWordsMinLength: number;
+  randomWordsMaxLength: number;
+  randomWordsMaxTests: number;
+
+  constructor(randomWordsMinLength: number, randomWordsMaxLength: number, randomWordsMaxTests: number) {
+    this.randomWordsMinLength = randomWordsMinLength;
+    this.randomWordsMaxLength = randomWordsMaxLength;
+    this.randomWordsMaxTests = randomWordsMaxTests;
+  }
+}
+
+type EQConfig = EQMealyConfig | EQMooreConfig;
+
 export class LearnerConfig {
   readonly algorithm: LearnerAlgorithm;
   readonly name: string;
   readonly rankdir: DotRankDir;
+  readonly eqconfig: EQConfig | undefined;
+  readonly saveAllHypotheses: boolean;
 
   constructor(algorithm: LearnerAlgorithm, mode: System, rankDir: DotRankDir = 'TB') {
     this.algorithm = algorithm;
     this.rankdir = rankDir;
     this.name = 'system';
+    this.saveAllHypotheses = RunConfig.saveAllHypotheses;
+
+    switch (this.algorithm) {
+      case LearnerAlgorithm.MOORE:
+        this.eqconfig = new EQMooreConfig(RunConfig.eqConfig.randomWordsMinLength,
+          RunConfig.eqConfig.randomWordsMaxLength,
+          RunConfig.eqConfig.randomWordsMaxTests);
+        break;
+      case LearnerAlgorithm.MEALY:
+        this.eqconfig = new EQMealyConfig(RunConfig.eqConfig.randomWalkChanceOfResetting,
+          RunConfig.eqConfig.randomWalkNumberOfSymbols);
+        break;
+      default:
+        this.eqconfig = undefined;
+    }
+
     switch (mode) {
       case System.HTML_LF:
         this.name = 'lf-html';
@@ -69,15 +112,43 @@ export class LearnerConfig {
 
 export class MessageBuilder {
   private readonly _command: Command;
-  private _alphabet: string[] | undefined;
-  private _symbol: string | undefined;
-  private _outputs: Action[] | undefined;
-  private _session: SessionCtx | undefined;
-  private _config: LearnerConfig | undefined;
-
 
   constructor(command: Command) {
     this._command = command;
+  }
+
+  private _alphabet: string[] | undefined;
+
+  get alphabet(): string[] | undefined {
+    return this._alphabet;
+  }
+
+  private _symbol: string | undefined;
+
+  get symbol(): string | undefined {
+    return this._symbol;
+  }
+
+  private _outputs: Action[] | undefined;
+
+  get outputs(): Action[] | undefined {
+    return this._outputs;
+  }
+
+  private _session: SessionCtx | undefined;
+
+  get session(): SessionCtx | undefined {
+    return this._session;
+  }
+
+  private _config: LearnerConfig | undefined;
+
+  get config(): LearnerConfig | undefined {
+    return this._config;
+  }
+
+  get command(): Command {
+    return this._command;
   }
 
   withAlphabet(alphabet: string[]): MessageBuilder {
@@ -103,31 +174,6 @@ export class MessageBuilder {
   withLearnerConfig(learnerConfig: LearnerConfig): MessageBuilder {
     this._config = learnerConfig;
     return this;
-  }
-
-
-  get command(): Command {
-    return this._command;
-  }
-
-  get alphabet(): string[] | undefined {
-    return this._alphabet;
-  }
-
-  get symbol(): string | undefined {
-    return this._symbol;
-  }
-
-  get outputs(): Action[] | undefined {
-    return this._outputs;
-  }
-
-  get session(): SessionCtx | undefined {
-    return this._session;
-  }
-
-  get config(): LearnerConfig | undefined {
-    return this._config;
   }
 
   toMessage() {

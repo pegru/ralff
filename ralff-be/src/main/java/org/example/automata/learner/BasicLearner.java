@@ -20,7 +20,8 @@ import java.util.ArrayList;
 
 /**
  * BasicLearner abstract Learner.
- * Sources from basic-learning: <a href="https://gitlab.science.ru.nl/ramonjanssen/basic-learning">https://gitlab.science.ru.nl/ramonjanssen/basic-learning</a>
+ * Sources from basic-learning:
+ * <a href="https://gitlab.science.ru.nl/ramonjanssen/basic-learning">https://gitlab.science.ru.nl/ramonjanssen/basic-learning</a>
  * last accessed 29.01.2024
  * Commit hash: 8b86aaeb946653141a3ba884f45ff9f0c73531b2
  *
@@ -67,14 +68,13 @@ public abstract class BasicLearner {
   /**
    * Produces a dot-file and a PDF (if graphviz is installed)
    *
-   * @param fileName     filename without extension - will be used for the .dot and .pdf
-   * @param automaton
-   * @param alphabet
-   * @param verboseError whether to print an error explaing that you need graphviz
-   * @throws FileNotFoundException
-   * @throws IOException
+   * @param fileName  filename without extension - will be used for the .dot and .pdf
+   * @param automaton the automaton to save in a file
+   * @param alphabet  learned input alphabet
+   * @throws FileNotFoundException if file can not be generated
+   * @throws IOException           if file can not be generated
    */
-  protected boolean produceOutput(String fileName, Automaton<?, String, ?> automaton, Alphabet<String> alphabet, boolean verboseError) throws FileNotFoundException, IOException {
+  protected boolean produceOutput(String fileName, Automaton<?, String, ?> automaton, Alphabet<String> alphabet) throws FileNotFoundException, IOException {
     // check if environment variable is set
     if (RunConfig.OUTPUT_DIR == null) {
       System.out.println("Environment variable OUTDIR_ENV_VARIABLE not set.");
@@ -108,10 +108,8 @@ public abstract class BasicLearner {
       System.out.println("result written to " + file.getAbsolutePath());
       return true;
     } catch (Exception e) {
-      if (verboseError) {
-        System.err.println("Warning: Install graphviz to convert dot-files to PDF");
-        System.err.println(e.getMessage());
-      }
+      System.err.println("Warning: Install graphviz to convert dot-files to PDF");
+      System.err.println(e.getMessage());
     } finally {
       dotWriter.close();
     }

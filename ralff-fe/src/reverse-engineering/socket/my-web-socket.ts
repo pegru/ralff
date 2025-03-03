@@ -219,7 +219,8 @@ export class MyWebSocket {
       this.logger.log("Sending message ", message);
       this.webSocket.send(JSON.stringify(message));
     } else {
-      console.log("Warning: unable to send message. Is WebSocket connected?");
+      // alert("Unable to send message. Is WebSocket connected?")
+      console.warn("Warning: unable to send message. Is WebSocket connected?");
     }
   }
 }

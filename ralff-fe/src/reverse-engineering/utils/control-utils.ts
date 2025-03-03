@@ -43,7 +43,7 @@ export const extractIdentifier = (e: Element) => {
   const control = e.querySelector(HTML_CONTROLS);
   e = control ?? e;
 
-  const id = e.id;
+  // const id = e.id;
   // if (e.id && e.id.length > 0) {
   //   return e.id;
   // }
@@ -58,18 +58,22 @@ export const extractIdentifier = (e: Element) => {
     return e.ariaLabel;
   }
 
-  // return id
-  if (id) {
-    return id;
-  }
+  // do not return id as it might change for design libraries, e.g. MUI
+  // if (id) {
+  //   return id;
+  // }
 
   // special case button: return textcontent
   if (e instanceof HTMLButtonElement && e.textContent) {
     return pruneIdentifier(e.textContent);
   }
 
+  if (e.localName) {
+    return e.localName;
+  }
+
   // return node type
-  return e.localName;
+  return e.tagName;
 }
 
 const filter = <K extends keyof HTMLElementTagNameMap>(node: Node, selector: K) => {

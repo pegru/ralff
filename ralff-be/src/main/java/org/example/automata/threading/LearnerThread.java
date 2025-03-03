@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
 
 /**
  * LearnerThread, runs the experiment.
- * Required to free up LearnerController to further accept messages which get passed along to this thread over bufferedMessageHandler
+ * Required to free up LearnerController to further accept messages which get passed along to this thread over
+ * bufferedMessageHandler
  *
  * @author Peter Grubelnik
  */
@@ -29,7 +30,8 @@ public class LearnerThread implements Runnable {
   private final Collection<String> inputAlphabet;
   private final LearnerConfig learnerConfig;
 
-  public LearnerThread(BufferedMessageHandler bufferedMessageHandler, ArrayList<String> inputAlphabet, LearnerConfig learnerConfig) {
+  public LearnerThread(BufferedMessageHandler bufferedMessageHandler, ArrayList<String> inputAlphabet,
+                       LearnerConfig learnerConfig) {
     this.inputAlphabet = new ArrayList<>(inputAlphabet);
     this.bufferedMessageHandler = bufferedMessageHandler;
     this.learnerConfig = learnerConfig;
@@ -45,15 +47,16 @@ public class LearnerThread implements Runnable {
       switch (learnerConfig.getAlgorithm()) {
         case MOORE:
           MooreSocketSUL mooreSocketSUL = new MooreSocketSUL(this.bufferedMessageHandler);
-          MooreLearner mooreLearner = new MooreLearner(learnerConfig, this.bufferedMessageHandler);
-          mooreLearner.runMooreExperiment(mooreSocketSUL, this.inputAlphabet);
+          MooreLearner mooreLearner = new MooreLearner(learnerConfig, this.bufferedMessageHandler, mooreSocketSUL);
+          mooreLearner.runMooreExperiment(this.inputAlphabet);
           System.out.println("Writing SymbolTable...");
           mooreSocketSUL.writeToFile(learnerConfig.getName() + "-st-moore");
           break;
         case MEALY:
           MealySocketSUL mealySocketSUL = new MealySocketSUL(this.bufferedMessageHandler);
-          MealyLearner mealyLearner = new MealyLearner(learnerConfig, this.bufferedMessageHandler);
-          mealyLearner.runMealyExperiment(mealySocketSUL, BasicLearner.LearningMethod.LStar, BasicLearner.TestingMethod.RandomWalk, this.inputAlphabet);
+          MealyLearner mealyLearner = new MealyLearner(learnerConfig, this.bufferedMessageHandler, mealySocketSUL);
+          mealyLearner.runMealyExperiment(BasicLearner.LearningMethod.LStar, BasicLearner.TestingMethod.RandomWalk,
+                                          this.inputAlphabet);
           System.out.println("Writing SymbolTable...");
           mealySocketSUL.writeToFile(learnerConfig.getName() + "-st-mealy");
           break;
@@ -64,7 +67,8 @@ public class LearnerThread implements Runnable {
       System.out.println("Gracefully exiting Thread.");
     } catch (Exception e) {
       System.err.println("Shutting down thread..." + Thread.currentThread().toString());
-      String result = Arrays.stream(e.getStackTrace()).toList().stream().map(StackTraceElement::toString).collect(Collectors.joining("\n"));
+      String result =
+          Arrays.stream(e.getStackTrace()).toList().stream().map(StackTraceElement::toString).collect(Collectors.joining("\n"));
       System.err.println(result);
       System.err.println("Message: " + e.getMessage());
 

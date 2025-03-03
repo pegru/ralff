@@ -2,7 +2,7 @@ import {LearnerAlgorithm, QueryType, System} from './socket/model/message';
 import {getCookie, setCookie} from './utils/cookie-handler';
 
 export const ROOT_ID = '#root';
-export const AUTOMATA_LEARNING_SOCKET = import.meta.env.VITE_RALFF_BE_WS ?? 'ws://localhost:8080/ralff_be_war/websocket'
+export const AUTOMATA_LEARNING_SOCKET = import.meta.env.VITE_RALFF_BE_WS ?? 'ws://localhost:8080/ralff-be/websocket'
 export const RELOAD_THRESHOLD = 2000;
 export const SESSION_ID_COOKIE: string = "sessionId";
 export const SOCKET_AUTO_CONNECT_COOKIE: string = "shouldConnectSocket";
@@ -21,9 +21,20 @@ export class QueryCount {
   public eqReset: number = 0;
 }
 
+export class EqConfig {
+  // mealy
+  public randomWalkChanceOfResetting: number = 0.1; // default: 0.1
+  public randomWalkNumberOfSymbols: number = 15_000; // default 15_000
+  // moore
+  public randomWordsMinLength: number = 2; // default: 2
+  public randomWordsMaxLength: number = 40; // default: 40
+  public randomWordsMaxTests: number = 400; // default: 400
+}
+
 export class DefaultConfig {
   public static socketAutoConnect: boolean = false;
   public static sessionId: string | undefined = undefined;
+  public static eqConfig: EqConfig = new EqConfig();
   public static queryType: QueryType.MQ;
   public static queryCount: QueryCount = new QueryCount()
   public static LEARNING_MODE: System = System.HTML_LF;
@@ -38,6 +49,12 @@ export class RunConfig {
 
   public static socketLogging = false;
   public static executorLogging = false;
+
+  // equivalence oracle config
+  public static eqConfig: EqConfig = DefaultConfig.eqConfig;
+
+  // intermediate result config
+  public static saveAllHypotheses: boolean = true;
 
   // automation depending variables
   public static socketAutoConnect: boolean = DefaultConfig.socketAutoConnect;
