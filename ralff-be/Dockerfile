@@ -3,9 +3,14 @@ LABEL authors="petergrubelnik"
 WORKDIR /app
 COPY . .
 
-RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "package", "--fail-never"]
+RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "clean", "package", "--fail-never"]
 
 FROM tomcat:10.1.20-jdk21
-COPY --from=MVN_BUILDER /app/target/ralff-be.war /usr/local/tomcat/webapps/ralff-be.war
+
+# Install additional dependencies
 RUN apt-get update && apt-get install -y graphviz
+
+# copy war file
+COPY --from=MVN_BUILDER /app/target/ralff-be.war /usr/local/tomcat/webapps/ralff-be.war
+
 CMD ["catalina.sh", "run"]

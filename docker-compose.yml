@@ -1,11 +1,16 @@
-version: '1.0'
+networks:
+  ralff-network:
+    driver: bridge
 
 services:
   backend:
     container_name: ralff-be
     build:
       context: ./ralff-be
-    network_mode: host
+    networks:
+      - ralff-network
+    ports:
+      - "8080:8080"
     volumes:
       - ./learned-models:/usr/local/tomcat/learned-models
     environment:
@@ -15,6 +20,9 @@ services:
     container_name: ralff-fe
     build:
       context: ./ralff-fe
-    network_mode: host
+    networks:
+      - ralff-network
+    ports:
+      - "3055:3055"
     environment:
       - VITE_RALFF_BE_WS=ws://localhost:8080/ralff-be/websocket
