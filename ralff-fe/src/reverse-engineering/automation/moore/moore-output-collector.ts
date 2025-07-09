@@ -18,7 +18,7 @@ export class MooreOutputCollector extends ACollector {
     this.elementRegistry = new Set<string>();
   }
 
-  mutationObserverCB(mutationList: MutationRecord[], observer: MutationObserver): void {
+  mutationObserverCB(mutationList: MutationRecord[], _: MutationObserver): void {
     this.uiSettled = false;
     mutationList.forEach(record => {
       if (record.type === 'childList') {

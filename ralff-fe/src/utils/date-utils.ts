@@ -1,5 +1,5 @@
 export const validateDate = (v: Date | null): string | boolean => {
-  if (isNaN(v?.getTime())) {
+  if (isNaN(v?.getTime() as number)) {
     return 'Enter date';
   }
   return true;

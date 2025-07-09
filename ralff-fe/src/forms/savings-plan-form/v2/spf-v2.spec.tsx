@@ -1,7 +1,9 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import {BrowserRouter} from 'react-router-dom';
-import SpfV2 from './spf-v2';
+import '@testing-library/jest-dom'
+import {SpfV2} from "./spf-v2.tsx";
+
 
 describe('SavingPlanForm', () => {
   beforeEach(() => {

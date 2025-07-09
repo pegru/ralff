@@ -1,10 +1,12 @@
+type Callback = () => void;
+
 export class PausableTimeout {
-  callback: () => void;
+  callback: Callback;
   remainingTime: number;
-  timeoutId: number | null;
+  timeoutId: ReturnType<typeof setTimeout> | null = null;
   startTime: number | null;
 
-  constructor(callback, delay) {
+  constructor(callback: Callback, delay: number) {
     this.callback = callback;
     this.remainingTime = delay;
     this.timeoutId = null;
@@ -25,7 +27,7 @@ export class PausableTimeout {
   pause() {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
-      const elapsedTime = Date.now() - this.startTime;
+      const elapsedTime = Date.now() - (this.startTime ?? Date.now());
       this.remainingTime -= elapsedTime;
       this.timeoutId = null;
     }

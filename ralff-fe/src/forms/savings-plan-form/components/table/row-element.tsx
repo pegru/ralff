@@ -31,6 +31,7 @@ export interface RowElementProps {
 export const RowElement = ({index, data, remove, disabled}: RowElementProps) => {
   const {field, fieldState: {error}} = useController({
     name: `${FORM_SAVINGS}.${index}.${FORM_AMOUNT}`, rules: {
+      // @ts-ignore
       valueAsNumber: true,
       required: {value: true, message: 'Required'},
       min: {value: 10, message: '>10'},

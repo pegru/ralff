@@ -21,7 +21,7 @@ export abstract class ACollector {
     this.uiMutationObserver = new MutationObserver((mutations, observer) => this.uiObserverCB(mutations, observer));
   }
 
-  private uiObserverCB(mutationList: MutationRecord[], observer: MutationObserver) {
+  private uiObserverCB(_a: MutationRecord[], _b: MutationObserver) {
     this.uiSettled = false;
   }
 

@@ -18,6 +18,7 @@ const defaultValuesUnfilled: SavingsFormDto = {
   monthlySavings: 0,
   savings: []
 }
+// @ts-ignore
 const defaultValuesFilled: SavingsFormDto = {
   title: 'Title',
   startDate: new Date('2023-10-11'),

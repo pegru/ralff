@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class TaskManager {
-  private static final int THREAD_POOL_SIZE = 5;
+  private static final int THREAD_POOL_SIZE = 1;
   private static TaskManager instance;
   private ExecutorService executorService;
 

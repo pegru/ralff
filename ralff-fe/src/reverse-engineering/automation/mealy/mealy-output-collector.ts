@@ -45,7 +45,7 @@ export class MealyOutputCollector extends ACollector {
     this.actions.push(action);
   }
 
-  mutationObserverCB(mutationList: MutationRecord[], observer: MutationObserver) {
+  mutationObserverCB(mutationList: MutationRecord[], _: MutationObserver) {
     this.uiSettled = false;
     mutationList.forEach(record => {
       if (record.type === 'childList') {

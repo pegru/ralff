@@ -19,7 +19,7 @@ export const EndDate = ({disabled = false}: EndDateProps) => {
     name: FORM_END_DATE, rules: {
       validate: {
         valid: validateDate,
-        afterStart: (value, formValues) => {
+        afterStart: (_, formValues) => {
           const {startDate, endDate} = formValues as SavingsFormDto;
           if (startDate && endDate && startDate >= endDate) {
             return "Date must be after start"
