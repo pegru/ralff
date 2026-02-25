@@ -1,11 +1,11 @@
 # RALFF - React Automata Learner for Forms
 
+Find the paper here: https://ieeexplore.ieee.org/document/10962489
+
 RALFF comprises a backend and frontend implementation to showcase the application of automata learning to React Web Forms. The project
 is split into two implementations, a frontend and backend part. The frontend holds the System Under Learning (SUL) implementation while the 
 backend is the backbone for automata learning.
 <img src="./graphics/architecture.svg">
-
-Find the paper here: https://ieeexplore.ieee.org/document/10962489
 
 ## Getting Started
 1. Create folder for learned models ```mkdir learned-models```
