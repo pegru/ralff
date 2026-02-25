@@ -5,6 +5,8 @@ is split into two implementations, a frontend and backend part. The frontend hol
 backend is the backbone for automata learning.
 <img src="./graphics/architecture.svg">
 
+Find the paper here: https://ieeexplore.ieee.org/document/10962489
+
 ## Getting Started
 1. Create folder for learned models ```mkdir learned-models```
 2. Run Docker containers with ```docker-compose up```
